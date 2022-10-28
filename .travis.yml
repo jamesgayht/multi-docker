@@ -1,0 +1,20 @@
+sudo: required
+services: 
+  - docker
+
+# tells travis to look into the client directory to look for the build context 
+before_install:
+  - docker build -t jamesgayht/react-test -f ./client/Dockerfile.dev ./client
+
+# -e CI=true makes sure the test eventually exits 
+script:
+  - docker run -e CI=true jamesgayht/react-test npm test
+
+# if all tests passed successfully
+# in this case we dont have to specify the dockerfile
+# because we are using the prod file --> Dockerfile (selected by default) 
+after_success: 
+  - docker build -t jamesgayht/multi-client ./client
+  - docker build -t jamesgayht/multi-nginx ./nginx
+  - docker build -t jamesgayht/multi-server ./server
+  - docker build -t jamesgayht/multi-worker ./worker
