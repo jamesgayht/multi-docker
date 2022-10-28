@@ -18,3 +18,17 @@ after_success:
   - docker build -t jamesgayht/multi-nginx ./nginx
   - docker build -t jamesgayht/multi-server ./server
   - docker build -t jamesgayht/multi-worker ./worker
+
+  # login to the docker CLI
+  # 1. go to travis-ci and in the repo select more options --> settings --> environment variables 
+  # 2. add in DOCKER_ID and DOCKER_PASSWORD as env variables 
+  # echo "$DOCKER_PASSWORD" | means that take the password variable and expect to pass it in the stdin position 
+  # docker login -u "$DOCKER_ID" is to pass in the userID during the login phase
+  # --password-stdin is akin to inputting the output we got from "echo $DOCKER_PASSWORD" for the --password
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # take the images above and push them into dockerhub 
+  - docker push jamesgayht/multi-client
+  - docker push jamesgayht/multi-nginx
+  - docker push jamesgayht/multi-server
+  - docker push jamesgayht/multi-worker
